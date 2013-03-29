@@ -4,8 +4,11 @@ ruby-icaro
 Ruby api for robotica Icaro
 
 Robot Icaro is a proyect iniciated by Valentin Basel it has a Python API. The goal of this proyect is to add a Ruby API to Icaro project.
+
 http://roboticaicaro.org
+
 http://www.sistema-icaro.blogspot.com/
+
 To be able to use icaro board must be conected to the USB on you computer and you must install tortucaro first.
 
 How to used
