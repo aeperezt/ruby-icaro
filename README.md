@@ -13,18 +13,32 @@ How to used
 require 'icaro'
 
 icaro=Icaro.new
-to move robot 
+
+to move robot
+ 
  1 forward
+
  2 back
+
  3 left
+
  4 right
+
  5 stop
+
 icaro.motor('1')
+
 to read analog sensors
+
 icaro.read_analgo('1')
+
 to read digital sensors
+
 icaro.read_digital('1')
+
 to activate servo motors
+
 icaro board has 5 servos 
+
 icaro.servo('1','z')
 
