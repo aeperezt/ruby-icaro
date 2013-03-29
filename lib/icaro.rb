@@ -3,8 +3,20 @@
 require 'rubygems'
 require 'serialport'
 class Icaro
+
+#added aliases to use the same names as the apicaro on python api
+alias :activar :start
+alias :cerrar  :close
+alias :leer_analogico :read_analog
+alias :leer_digital :read_digital
+alias :activar_servo :servo
+alias :sonido :sound
+
 #look for the device ttyACM
 #initialize the device and check if Icaro board is conected and set
+# while icaro load the device may not be ready so we manage it with a rescue
+# icaro board is normally recognice as a /dev/ttyACM0 how ever in some cases
+# it sets on /dev/ttyACM1 so we read the device and set verify if its ready
   def initialize
 	tty=Dir["/dev/ttyACM*"]
 	unless tty.count==0
@@ -15,10 +27,8 @@ class Icaro
 			@sp.write('b')
 			ttyread=@sp.read
 			if ttyread.include?("icaro") 
-				icaro=device
 				return true
 			else 	
-				icaro=''
 				return false
 			end
 		  rescue Errno::ENODEV => ex
@@ -30,12 +40,16 @@ class Icaro
 	          end		
 		end
 	else
-		icaro=''
 		puts "Please connect Icaro"
 	end 
   end
+  def close 
+      @sp.close
+  end
 # set Icaro board to ready status
-  def start(sp,value)
+# icaro=Icaro.new
+# icaro.start('1')
+  def start(value)
     begin
 	@sp.write('s')
 	@sp.write(value)
@@ -43,7 +57,6 @@ class Icaro
     rescue IOError => ex
         return ex
     end
-
   end
 #Motor move robot DC motors 
 # 1 forward
@@ -52,54 +65,73 @@ class Icaro
 # 4 right
 # 5 stop
 # values are strings
+# icaro.motor('1') move icaro forward
+#
   def motor(value)
-   begin
+    if [1,2,3,4].include?(value.to_i)
+     begin
 	@sp.write('l')
 	@sp.write(value)
-        return @sp.read
-    rescue IOError => ex
+        return true
+     rescue IOError => ex
         return ex
+     end
+    else
+     return false
     end
-
   end
 #read analog input sensors
 #there are 8 analog input ports
+# icaro.read_analog('3')
   def read_analog(value)
-     begin
+     if [1,2,3,4,5,6,7,8].include?(value.to_i)
+      begin
 	@sp.write('e')
 	@sp.write(value)
 	return @sp.read
-    rescue IOError => ex
+      rescue IOError => ex
         return ex
-    end
-
+      end
+     else
+    	return false
+     end
   end
 #read digital input sensor
 #there are 4 digital input sensors ports
+# d=icaro.read_digital('3')
   def read_digital(value)
-   begin
+    if [1,2,3,4].include?(value.to_i)
+      begin
 	@sp.write('d')
 	@sp.write(value)
 	return @sp.read==1 ? 1:0
-    rescue IOError => ex
+      rescue IOError => ex
         return ex
+      end
+    else
+      return false
     end
-
   end
 #move servo motors
 #Icaro board has 5 servo engines ports
 #value is one of 255 characters and move the engine to that position
+# icaro.servo('1','x')
   def servo(servo,value)
-    begin
+    if [1,2,3,4,5].include?(servo.to_i)
+      begin
 	@sp.write('m')
 	@sp.write(servo)
 	@sp.write(value)
 	return true
-    rescue IOError => ex
+      rescue IOError => ex
 	return ex
+      end
+    else
+	return false
     end
   end
 #sound produce a sound on the port
+# icaro.sound('2','2')
   def sound(audio,value)
     begin
 	@sp.write('a')

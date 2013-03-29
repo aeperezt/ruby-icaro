@@ -8,4 +8,5 @@ Gem::Specification.new do |s|
  s.email	= 'alejandro.perez.torres@gmail.com' 
  s.files	= ["lib/icaro.rb"]
  s.homepage	= "http://rubygems.org/gems/icaro"
+ s.requirements = 'serialport'
 end
