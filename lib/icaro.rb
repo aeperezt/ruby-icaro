@@ -5,12 +5,6 @@ require 'serialport'
 class Icaro
 
 #added aliases to use the same names as the apicaro on python api
-alias :activar :start
-alias :cerrar  :close
-alias :leer_analogico :read_analog
-alias :leer_digital :read_digital
-alias :activar_servo :servo
-alias :sonido :sound
 
 #look for the device ttyACM
 #initialize the device and check if Icaro board is conected and set
@@ -35,6 +29,8 @@ alias :sonido :sound
 			STDERR.puts ex.message
 	          rescue Errno::EBUSY => ex
 			STDERR.puts ex.message
+		  rescue Errno::EIO => ex
+			STDERR.puts ex.message
 		  rescue IOError => ex
 			STDERR.puts ex.message
 	          end		
@@ -43,9 +39,19 @@ alias :sonido :sound
 		puts "Please connect Icaro"
 	end 
   end
+
   def close 
+    begin
       @sp.close
+        return true
+    rescue Errno::EIO => ex
+        STDERR.puts ex.message
+    rescue IOError => ex
+        return ex
+    end
   end
+
+ alias cerrar close
 # set Icaro board to ready status
 # icaro=Icaro.new
 # icaro.start('1')
@@ -54,10 +60,15 @@ alias :sonido :sound
 	@sp.write('s')
 	@sp.write(value)
         return true
+    rescue Errno::EIO => ex
+        STDERR.puts ex.message
     rescue IOError => ex
         return ex
     end
   end
+
+alias activar start
+
 #Motor move robot DC motors 
 # 1 forward
 # 2 back
@@ -73,6 +84,8 @@ alias :sonido :sound
 	@sp.write('l')
 	@sp.write(value)
         return true
+     rescue Errno::EIO => ex
+        STDERR.puts ex.message
      rescue IOError => ex
         return ex
      end
@@ -80,6 +93,7 @@ alias :sonido :sound
      return false
     end
   end
+
 #read analog input sensors
 #there are 8 analog input ports
 # icaro.read_analog('3')
@@ -89,6 +103,8 @@ alias :sonido :sound
 	@sp.write('e')
 	@sp.write(value)
 	return @sp.read
+      rescue Errno::EIO => ex
+        STDERR.puts ex.message
       rescue IOError => ex
         return ex
       end
@@ -96,6 +112,9 @@ alias :sonido :sound
     	return false
      end
   end
+
+alias leer_analogico read_analog
+
 #read digital input sensor
 #there are 4 digital input sensors ports
 # d=icaro.read_digital('3')
@@ -105,6 +124,8 @@ alias :sonido :sound
 	@sp.write('d')
 	@sp.write(value)
 	return @sp.read==1 ? 1:0
+      rescue Errno::EIO => ex
+        STDERR.puts ex.message
       rescue IOError => ex
         return ex
       end
@@ -112,6 +133,9 @@ alias :sonido :sound
       return false
     end
   end
+
+alias leer_digital read_digital
+
 #move servo motors
 #Icaro board has 5 servo engines ports
 #value is one of 255 characters and move the engine to that position
@@ -123,6 +147,8 @@ alias :sonido :sound
 	@sp.write(servo)
 	@sp.write(value)
 	return true
+      rescue Errno::EIO => ex
+        STDERR.puts ex.message
       rescue IOError => ex
 	return ex
       end
@@ -130,6 +156,9 @@ alias :sonido :sound
 	return false
     end
   end
+
+alias activar_servo servo
+
 #sound produce a sound on the port
 # icaro.sound('2','2')
   def sound(audio,value)
@@ -141,10 +170,14 @@ alias :sonido :sound
 	@sp.write('s')
 	@sp.write('0')
         return true
+    rescue Errno::EIO => ex
+        STDERR.puts ex.message
     rescue IOError => ex
         return ex
     end
 
   end
+
+alias sonido sound
 end
 
