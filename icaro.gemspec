@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
  s.name		= 'icaro' 
- s.version	= '1.0.4'
- s.date		= '2013-03-28'
+ s.version	= '1.0.5'
+ s.date		= '2013-04-01'
  s.summary	= "Icaro Ruby Api"
  s.description	= "Ruby api for Icaro Robot"
  s.authors 	= ["Alejandro Pérez"]

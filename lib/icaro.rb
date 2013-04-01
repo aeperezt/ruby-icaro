@@ -138,14 +138,14 @@ alias leer_digital read_digital
 
 #move servo motors
 #Icaro board has 5 servo engines ports
-#value is one of 255 characters and move the engine to that position
+#value is one of 255 integer and move the engine to that position
 # icaro.servo('1','x')
   def servo(servo,value)
     if [1,2,3,4,5].include?(servo.to_i)
       begin
 	@sp.write('m')
 	@sp.write(servo)
-	@sp.write(value)
+	@sp.write(value.to_i)
 	return true
       rescue Errno::EIO => ex
         STDERR.puts ex.message
